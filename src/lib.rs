@@ -10,7 +10,7 @@
 use std::fmt;
 use std::sync::Arc;
 
-//pub mod filesystem;
+pub mod filesystem;
 pub mod vfs;
 
 /// Error type
