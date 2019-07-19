@@ -1,6 +1,6 @@
 [package]
 name = "gvfs"
-description = "A lightweight game framework for making 2D games with minimum friction, inspired by Love2D."
+description = "A Rust crate providing a configurable virtual file system for game assets, a la PhysFS"
 version = "0.1.0"
 homepage = "http://ggez.rs"
 repository = "https://github.com/ggez/gvfs"
@@ -26,6 +26,9 @@ path = "src/lib.rs"
 [features]
 
 [dependencies]
+directories = "2"
+zip = { version = "0.5", default-features = false }
+log = "0.4"
 
 [dev-dependencies]
 skeptic = "0.13"
