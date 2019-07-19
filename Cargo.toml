@@ -5,7 +5,7 @@ version = "0.1.1"
 homepage = "http://ggez.rs"
 repository = "https://github.com/ggez/gvfs"
 documentation = "https://docs.rs/gvfs"
-keywords = ["ggez", "game"]
+keywords = ["filesystem", "game", "webassembly", "zip"]
 authors = [
    "Simon Heath <icefoxen@gmail.com>",
 ]
@@ -13,14 +13,14 @@ authors = [
 edition = "2018"
 license = "MIT / Apache-2.0"
 readme = "README.md"
-categories = ["game-engines"]
+categories = ["filesystem", "game-engines"]
 build = "build.rs"
 
 [badges]
 maintenance = { status = "experimental" }
 
 [lib]
-name = "ggez"
+name = "gvfs"
 path = "src/lib.rs"
 
 [features]
