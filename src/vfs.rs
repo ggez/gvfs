@@ -726,7 +726,7 @@ impl VFS for ZipFS {
         }
         let mut stupid_archive_borrow = self.archive
             .try_borrow_mut()
-            .expect("Couldn't borrow ZipArchive in ZipFS::open_options(); should never happen! Report a bug at https://github.com/ggez/ggez/");
+            .expect("Couldn't borrow ZipArchive in ZipFS::open_options(); should never happen! Report a bug at https://github.com/ggez/gvfs/");
         let mut f = stupid_archive_borrow.by_name(path)?;
         let zipfile = ZipFileWrapper::new(&mut f)?;
         Ok(Box::new(zipfile) as Box<dyn VFile>)
@@ -759,7 +759,7 @@ impl VFS for ZipFS {
     fn exists(&self, path: &Path) -> bool {
         let mut stupid_archive_borrow = self.archive
             .try_borrow_mut()
-            .expect("Couldn't borrow ZipArchive in ZipFS::exists(); should never happen!  Report a bug at https://github.com/ggez/ggez/");
+            .expect("Couldn't borrow ZipArchive in ZipFS::exists(); should never happen!  Report a bug at https://github.com/ggez/gvfs/");
         if let Ok(path) = convenient_path_to_str(path) {
             stupid_archive_borrow.by_name(path).is_ok()
         } else {
@@ -771,7 +771,7 @@ impl VFS for ZipFS {
         let path = convenient_path_to_str(path)?;
         let mut stupid_archive_borrow = self.archive
             .try_borrow_mut()
-            .expect("Couldn't borrow ZipArchive in ZipFS::metadata(); should never happen! Report a bug at https://github.com/ggez/ggez/");
+            .expect("Couldn't borrow ZipArchive in ZipFS::metadata(); should never happen! Report a bug at https://github.com/ggez/gvfs/");
         match ZipMetadata::new(path, &mut **stupid_archive_borrow) {
             None => Err(Error::VfsError(format!(
                 "Metadata not found in zip file for {}",

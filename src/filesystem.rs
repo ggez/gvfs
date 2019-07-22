@@ -90,8 +90,7 @@ impl io::Write for File {
 impl Filesystem {
     /// Create a new `Filesystem` instance, using the given `id` and (on
     /// some platforms) the `author` as a portion of the user
-    /// directory path.  This function is called automatically by
-    /// ggez, the end user should never need to call it.
+    /// directory path.  
     pub fn new(id: &str, author: &str) -> Result<Filesystem> {
         let mut root_path = env::current_exe()?;
 
