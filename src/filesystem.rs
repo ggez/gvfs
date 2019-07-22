@@ -123,7 +123,7 @@ impl Filesystem {
             resources_path.push("resources");
             trace!("Resources path: {:?}", resources_path);
             let physfs = vfs::PhysicalFS::new(&resources_path, true);
-            overlay.push_back(Box::new(physfs));
+            overlay.push(Box::new(physfs));
         }
 
         // <root>/resources.zip
@@ -133,7 +133,7 @@ impl Filesystem {
             if resources_zip_path.exists() {
                 trace!("Resources zip file: {:?}", resources_zip_path);
                 let zipfs = vfs::ZipFS::new(&resources_zip_path)?;
-                overlay.push_back(Box::new(zipfs));
+                overlay.push(Box::new(zipfs));
             } else {
                 trace!("No resources zip file found");
             }
@@ -145,7 +145,7 @@ impl Filesystem {
             user_data_path = project_dirs.data_local_dir();
             trace!("User-local data path: {:?}", user_data_path);
             let physfs = vfs::PhysicalFS::new(&user_data_path, true);
-            overlay.push_back(Box::new(physfs));
+            overlay.push(Box::new(physfs));
         }
 
         // Writeable local dir, ~/.config/whatever/
@@ -154,7 +154,7 @@ impl Filesystem {
             user_config_path = project_dirs.config_dir();
             trace!("User-local configuration path: {:?}", user_config_path);
             let physfs = vfs::PhysicalFS::new(&user_config_path, false);
-            overlay.push_back(Box::new(physfs));
+            overlay.push(Box::new(physfs));
         }
 
         let fs = Filesystem {
@@ -296,7 +296,7 @@ impl Filesystem {
     pub fn mount(&mut self, path: &path::Path, readonly: bool) {
         let physfs = vfs::PhysicalFS::new(path, readonly);
         trace!("Mounting new path: {:?}", physfs);
-        self.vfs.push_back(Box::new(physfs));
+        self.vfs.push(Box::new(physfs));
     }
 
     /// Adds any object that implements Read + Seek as a zip file.
@@ -308,122 +308,10 @@ impl Filesystem {
     pub fn add_zip_file<R: io::Read + io::Seek + 'static>(&mut self, reader: R) -> Result<()> {
         let zipfs = vfs::ZipFS::from_read(reader)?;
         trace!("Adding zip file from reader");
-        self.vfs.push_back(Box::new(zipfs));
+        self.vfs.push(Box::new(zipfs));
         Ok(())
     }
 }
-
-/*
-/// Opens the given path and returns the resulting `File`
-/// in read-only mode.
-pub fn open<P: AsRef<path::Path>>(ctx: &mut Context, path: P) -> Result<File> {
-    ctx.filesystem.open(path)
-}
-
-/// Opens a file in the user directory with the given `filesystem::OpenOptions`.
-/// Note that even if you open a file read-only, it can only access
-/// files in the user directory.
-pub fn open_options<P: AsRef<path::Path>>(
-    ctx: &mut Context,
-    path: P,
-    options: OpenOptions,
-) -> Result<File> {
-    ctx.filesystem.open_options(path, options)
-}
-
-/// Creates a new file in the user directory and opens it
-/// to be written to, truncating it if it already exists.
-pub fn create<P: AsRef<path::Path>>(ctx: &mut Context, path: P) -> Result<File> {
-    ctx.filesystem.create(path)
-}
-
-/// Create an empty directory in the user dir
-/// with the given name.  Any parents to that directory
-/// that do not exist will be created.
-pub fn create_dir<P: AsRef<path::Path>>(ctx: &mut Context, path: P) -> Result {
-    ctx.filesystem.create_dir(path.as_ref())
-}
-
-/// Deletes the specified file in the user dir.
-pub fn delete<P: AsRef<path::Path>>(ctx: &mut Context, path: P) -> Result {
-    ctx.filesystem.delete(path.as_ref())
-}
-
-/// Deletes the specified directory in the user dir,
-/// and all its contents!
-pub fn delete_dir<P: AsRef<path::Path>>(ctx: &mut Context, path: P) -> Result {
-    ctx.filesystem.delete_dir(path.as_ref())
-}
-
-/// Check whether a file or directory exists.
-pub fn exists<P: AsRef<path::Path>>(ctx: &Context, path: P) -> bool {
-    ctx.filesystem.exists(path.as_ref())
-}
-
-/// Check whether a path points at a file.
-pub fn is_file<P: AsRef<path::Path>>(ctx: &Context, path: P) -> bool {
-    ctx.filesystem.is_file(path)
-}
-
-/// Check whether a path points at a directory.
-pub fn is_dir<P: AsRef<path::Path>>(ctx: &Context, path: P) -> bool {
-    ctx.filesystem.is_dir(path)
-}
-
-/// Return the full path to the user data directory
-pub fn user_data_dir(ctx: &Context) -> &path::Path {
-    &ctx.filesystem.user_data_path
-}
-
-/// Return the full path to the user config directory
-pub fn user_config_dir(ctx: &Context) -> &path::Path {
-    &ctx.filesystem.user_config_path
-}
-
-/// Returns the full path to the resource directory
-/// (even if it doesn't exist)
-pub fn resources_dir(ctx: &Context) -> &path::Path {
-    &ctx.filesystem.resources_path
-}
-
-/// Returns a list of all files and directories in the resource directory,
-/// in no particular order.
-///
-/// Lists the base directory if an empty path is given.
-pub fn read_dir<P: AsRef<path::Path>>(
-    ctx: &mut Context,
-    path: P,
-) -> Result<Box<dyn Iterator<Item = path::PathBuf>>> {
-    ctx.filesystem.read_dir(path)
-}
-
-/// Prints the contents of all data directories.
-/// Useful for debugging.
-pub fn print_all(ctx: &mut Context) {
-    ctx.filesystem.print_all()
-}
-
-/// Outputs the contents of all data directories,
-/// using the "info" log level of the `log` crate.
-/// Useful for debugging.
-///
-/// See the [`logging` example](https://github.com/ggez/ggez/blob/master/examples/eventloop.rs)
-/// for how to collect log information.
-pub fn log_all(ctx: &mut Context) {
-    ctx.filesystem.log_all()
-}
-
-/// Adds the given (absolute) path to the list of directories
-/// it will search to look for resources.
-///
-/// You probably shouldn't use this in the general case, since it is
-/// harder than it looks to make it bulletproof across platforms.
-/// But it can be very nice for debugging and dev purposes, such as
-/// by pushing `$CARGO_MANIFEST_DIR/resources` to it
-pub fn mount(ctx: &mut Context, path: &path::Path, readonly: bool) {
-    ctx.filesystem.mount(path, readonly)
-}
-*/
 
 #[cfg(test)]
 mod tests {
@@ -437,7 +325,7 @@ mod tests {
         path.push("resources");
         let physfs = vfs::PhysicalFS::new(&path, false);
         let mut ofs = vfs::OverlayFS::new();
-        ofs.push_front(Box::new(physfs));
+        ofs.push(Box::new(physfs));
         Filesystem {
             vfs: ofs,
 
