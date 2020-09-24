@@ -605,8 +605,8 @@ impl ZipFS {
         let items = (0..archive.len()).map(|i| {
             archive
                 .by_index(i)
-                .map_err(|err| Error::from(err))
-                .and_then(|item| Ok(item.name().to_string()))
+                .map_err(Error::from)
+                .map(|item| item.name().to_string())
         });
 
         // Propagate first bad result...
