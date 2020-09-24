@@ -619,14 +619,6 @@ impl ZipFS {
             .collect::<Vec<String>>();
         */
 
-        // Or partition good/bad results...
-        /*
-        let (idx, _errs): (Vec<_>, Vec<_>) = items.partition(std::result::Result::is_ok);
-
-        let idx = idx.into_iter().map(Result::unwrap).collect();
-        let _errs: Vec<_> = _errs.into_iter().map(Result::unwrap_err).collect();
-        */
-
         Ok(Self {
             source,
             archive: RefCell::new(archive),
