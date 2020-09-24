@@ -36,10 +36,8 @@ pub type Result<T = ()> = std::result::Result<T, Error>;
 
 impl From<zip::result::ZipError> for Error {
     fn from(e: zip::result::ZipError) -> Error {
-        let errstr = {
-            use std::error::Error;
-            format!("Zip error: {}", e.description())
-        };
+        let errstr = format!("Zip error: {}", e);
+
         Error::VfsError(errstr)
     }
 }
