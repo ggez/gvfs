@@ -602,15 +602,31 @@ impl ZipFS {
         mut archive: Box<dyn ZipArchiveAccess>,
         source: Option<PathBuf>,
     ) -> Result<Self> {
-        let idx = (0..archive.len())
-            .map(|i| {
-                archive
-                    .by_index(i)
-                    .expect("Should never happen!")
-                    .name()
-                    .to_string()
-            })
-            .collect();
+        let items = (0..archive.len()).map(|i| {
+            archive
+                .by_index(i)
+                .map_err(|err| Error::from(err))
+                .and_then(|item| Ok(item.name().to_string()))
+        });
+
+        // Propagate first bad result...
+        let idx = items.collect::<Result<Vec<_>>>()?;
+
+        // Or ignore bad results entirely...
+        /*
+        let idx = items
+            .filter_map(Result::ok)
+            .collect::<Vec<String>>();
+        */
+
+        // Or partition good/bad results...
+        /*
+        let (idx, _errs): (Vec<_>, Vec<_>) = items.partition(std::result::Result::is_ok);
+
+        let idx = idx.into_iter().map(Result::unwrap).collect();
+        let _errs: Vec<_> = _errs.into_iter().map(Result::unwrap_err).collect();
+        */
+
         Ok(Self {
             source,
             archive: RefCell::new(archive),
